@@ -1,79 +1,71 @@
-# VAULT script licences
+# VAULT whitelist
 
-Owner: @o93. Edit **policy.json** to manage who may run the licensed game code.
-This repository contains public permission records only. Never upload game scripts,
-Roblox cookies, GitHub tokens, Discord tokens, or secret licence keys here.
-
-## Allow or revoke an experience
-
-1. Open `policy.json`, click the pencil, and edit the existing `o93-owner` licence.
-2. Each object in `experiences` must contain the exact **placeId**, **universeId**,
-   **creatorType** (`User` or `Group`), and **creatorId** of the licensed game.
-   Keep IDs inside quotation marks. A place ID and a universe ID are different.
-3. Add an experience object to allow a place. Remove its object to revoke that place.
-4. Set a licence's `enabled` to `false` to revoke every place on that licence.
-   The root `enabled` switch disables every licence.
-5. Click **Commit changes**. Keep valid JSON: commas between objects, no trailing commas.
-
-The owner licence currently permits only:
-
-| Game | Place ID | Universe ID | Owning group |
-| --- | --- | --- | --- |
-| Testing game script | 79925779087470 | 10766735380 | 745931373 |
-| 3unny's Closet | 97694147197404 | 9320774242 | 990686758 |
-
-## Add a customer
-
-Add another named record under `licenses`, for example:
+Edit [policy.json](https://github.com/splithinator-oss/vault-script-licenses/edit/main/policy.json), then click **Commit changes**.
 
 ```json
-"customer-name": {
-  "enabled": true,
-  "expiresAt": 0,
-  "experiences": [
-    {
-      "label": "Customer game",
-      "placeId": "123",
-      "universeId": "456",
-      "creatorType": "User",
-      "creatorId": "789"
-    }
-  ]
+{
+  "games": [79925779087470, 97694147197404],
+  "groups": []
 }
 ```
 
-Replace every example ID with verified real IDs. In that customer's server-only
-`VaultLicense.Settings`, set `LicenseId` to `customer-name`. This name identifies a
-licence; it is public metadata, **not a password or redeemable player key**.
-Licences authorise developers' experiences. They do not restrict ordinary players
-who join an authorised game. Roblox usernames and Discord IDs are not creator IDs.
+| List | What adding an ID allows |
+| --- | --- |
+| `games` | That exact Roblox place, using the ID from its game-page link |
+| `groups` | Every place owned by that Roblox group |
 
-`expiresAt` is a Unix timestamp in seconds, UTC. `0` means no expiry. At the
-exact expiry second the licence is invalid. No Studio bypass is enabled.
+Use either list or both. A game is allowed if its ID is in `games` **OR** its owning group's ID is in `groups`.
+You do not need licence names, universe IDs, creator records, or expiry fields.
 
-## Timing and failures
+## Examples
 
-Each running server checks on startup and every 60-70 seconds. GitHub/CDN caching
-can delay edits; changes are not guaranteed to be instantaneous. A valid denial
-revokes access as soon as it is received. A previously verified server can survive
-a temporary network outage for at most 300 seconds from its last verification.
-New servers never start without a successful check. Malformed policies deny access.
-Denied servers require a restart after fixing or restoring their licence.
+**Only specific games:** put their place IDs in `games`; leave `groups` as `[]`.
+
+**All games owned by a group:** put the group ID in `groups`. For example, to
+allow the testing game's group and the main game's group:
+
+```json
+{
+  "games": [],
+  "groups": [745931373, 990686758]
+}
+```
+
+**Both:** keep specific IDs in `games` and group IDs in `groups`. A specific
+game does not have to belong to one of the listed groups.
+
+To add an ID, append it with a comma. To remove one, delete it and fix the comma.
+Empty lists (`[]`) allow nobody. IDs can be numbers or quoted strings.
+Keep the two lists present and use valid JSON, without comments or trailing commas.
+
+**Removing a game ID will still allow that game if its group remains listed.**
+To revoke it completely, remove every permission that covers it.
+
+The initial whitelist keeps only your two existing games. No entire group has
+been enabled automatically. Group IDs above are examples you can add yourself.
+
+## What to expect
+
+Servers check at startup and every 60-70 seconds. GitHub caching can delay updates.
+A received denial stops access. Temporary network failures have a maximum
+five-minute allowance only for previously verified servers. New servers need a
+successful check. After a denial, restart the game server once you restore access.
 
 Unlicensed copies kick with `Script stolen / unlicensed experience. Owner @o93.`
-Network/policy errors use a temporary-unavailability message instead.
 
-## Protection limits
+Only **testing game script** has the gate installed. Save/publish that updated
+Studio place for live servers. The main game's ID is listed, but its scripts
+have not been modified. Older published installations need the updated gate to
+read this simplified file.
 
-The gate runs on the server and the protected entry scripts require it before
-starting. Removing only the gate stops those entry scripts. No remote Lua is
-downloaded or executed. No game objects, player data, or saved progress are deleted.
+This whitelist authorises games using the script; it does not whitelist ordinary
+players or issue payment/redemption keys.
 
-Someone who owns an editable copy can change or remove all local checks. Obfuscation
-only increases the effort; it is not unbreakable DRM. Stronger protection requires
-keeping valuable functionality behind an authenticated service you control.
-Do not place GitHub credentials in Roblox source to read a private repository.
+## Keep source private
 
-Only the **testing game script** Studio place was instrumented during setup.
-The main game's ID is permitted by policy, but it needs its own installation to
-enforce these checks.
+This repository contains public IDs only. Do not upload your game source, tokens,
+cookies, or secret keys. The gate downloads JSON data and never executes remote Lua.
+
+An editable copy's owner can patch out local checks. Obfuscation adds effort but
+cannot make code unremovable. Keep valuable functionality on a service you control
+if it must stay outside distributed copies.

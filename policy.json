@@ -1,26 +1,7 @@
 {
-  "schemaVersion": 1,
-  "enabled": true,
-  "licenses": {
-    "o93-owner": {
-      "enabled": true,
-      "expiresAt": 0,
-      "experiences": [
-        {
-          "label": "Testing game script",
-          "placeId": "79925779087470",
-          "universeId": "10766735380",
-          "creatorType": "Group",
-          "creatorId": "745931373"
-        },
-        {
-          "label": "3unny's Closet",
-          "placeId": "97694147197404",
-          "universeId": "9320774242",
-          "creatorType": "Group",
-          "creatorId": "990686758"
-        }
-      ]
-    }
-  }
+  "games": [
+    79925779087470,
+    97694147197404
+  ],
+  "groups": []
 }
