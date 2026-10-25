@@ -5,7 +5,7 @@ Edit [policy.json](https://github.com/splithinator-oss/vault-script-licenses/edi
 ```json
 {
   "games": [79925779087470, 97694147197404],
-  "groups": []
+  "groups": [745931373]
 }
 ```
 
@@ -41,8 +41,9 @@ Keep the two lists present and use valid JSON, without comments or trailing comm
 **Removing a game ID will still allow that game if its group remains listed.**
 To revoke it completely, remove every permission that covers it.
 
-The initial whitelist keeps only your two existing games. No entire group has
-been enabled automatically. Group IDs above are examples you can add yourself.
+The whitelist currently allows your two listed games and every game owned by
+group `745931373`, which you asked to add. Group `990686758` is an example above;
+it has not been added to the group list.
 
 ## What to expect
 
